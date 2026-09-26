@@ -159,9 +159,9 @@ _Add screenshots of the Overview, Smart Bins, Analytics, Routes, and AI Recommen
 
 Built as a frontend engineering & product design portfolio project.
 
-- GitHub — _add your link_
-- LinkedIn — _add your link_
-- Portfolio — _add your link_
+- GitHub — github.com/Majortarif   
+- LinkedIn — https://www.linkedin.com/in/tariful-hoque-582321259/
+- Portfolio — tarifulhoqueportfoloi.netlify.app
 
 ---
 

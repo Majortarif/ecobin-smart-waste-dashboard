@@ -1,0 +1,235 @@
+/* ==========================================================================
+   EcoBin Dashboard — custom styles (tokens live in Tailwind config in HTML)
+   ========================================================================== */
+
+:root { color-scheme: dark; }
+html.light { color-scheme: light; }
+
+* { scrollbar-width: thin; scrollbar-color: #2A3B34 transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #2A3B34; border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+body { font-variant-numeric: tabular-nums; }
+.font-display { letter-spacing: -0.01em; }
+
+:focus-visible {
+  outline: 2px solid #34D399;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Hero background grid ---------- */
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(143,166,155,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(143,166,155,0.10) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 90% at 30% 30%, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 90% at 30% 30%, black 30%, transparent 75%);
+}
+
+/* ---------- App sections ---------- */
+.app-section { animation: section-in 0.35s ease both; }
+@keyframes section-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Sidebar / nav items ---------- */
+.nav-item {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 0.75rem; border-radius: 0.6rem;
+  font-size: 0.875rem; font-weight: 500;
+  color: #8FA69B; transition: background-color 0.18s ease, color 0.18s ease;
+  cursor: pointer; position: relative;
+}
+.nav-item:hover { background: #16211D; color: #E8F0EC; }
+.nav-item.active { background: rgba(52,211,153,0.12); color: #34D399; }
+.nav-item.active svg { color: #34D399; }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.bottom-nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 0.55rem 0.25rem 0.7rem; color: #5C7A6E; font-size: 10.5px; font-weight: 500;
+  transition: color 0.18s ease;
+}
+.bottom-nav-item.active { color: #34D399; }
+.bottom-nav-item svg { width: 20px; height: 20px; }
+
+/* ---------- Toggle switch ---------- */
+.toggle-switch {
+  width: 42px; height: 24px; border-radius: 999px; background: #2A3B34;
+  position: relative; transition: background-color 0.2s ease; flex-shrink: 0;
+}
+.toggle-switch[aria-checked="true"] { background: #34D399; }
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px; width: 18px; height: 18px;
+  border-radius: 999px; background: #E8F0EC; transition: transform 0.2s ease;
+}
+.toggle-switch[aria-checked="true"] .toggle-knob { transform: translateX(18px); }
+
+/* ---------- Bin "tank" fill gauge ---------- */
+.tank {
+  width: 34px; height: 64px; border-radius: 8px 8px 5px 5px;
+  border: 2px solid #2A3B34; position: relative; overflow: hidden;
+  background: #0F1815; flex-shrink: 0;
+}
+.tank::before {
+  content: ""; position: absolute; top: -6px; left: 4px; right: 4px; height: 5px;
+  background: #2A3B34; border-radius: 2px;
+}
+.tank-fill {
+  position: absolute; left: 0; right: 0; bottom: 0; width: 100%;
+  transition: height 0.8s cubic-bezier(0.16,1,0.3,1);
+  border-radius: 0 0 3px 3px;
+}
+.tank-fill::after {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: rgba(255,255,255,0.25);
+}
+
+/* ---------- Progress bar ---------- */
+.meter-track { height: 8px; border-radius: 999px; background: #1D2B26; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 999px; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); }
+
+/* ---------- Status dot / badge colors ---------- */
+.status-normal   { color: #34D399; }
+.status-moderate { color: #22D3EE; }
+.status-warning  { color: #FBBF24; }
+.status-critical { color: #F87171; }
+.status-offline  { color: #5C7A6E; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 500; padding: 3px 9px; border-radius: 999px;
+  border: 1px solid transparent;
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+.badge.b-normal   { color: #34D399; background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.2); }
+.badge.b-moderate { color: #22D3EE; background: rgba(34,211,238,0.1); border-color: rgba(34,211,238,0.2); }
+.badge.b-warning  { color: #FBBF24; background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.2); }
+.badge.b-critical { color: #F87171; background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.2); }
+.badge.b-offline  { color: #8FA69B; background: rgba(143,166,155,0.1); border-color: rgba(143,166,155,0.2); }
+
+/* ---------- Filter chip ---------- */
+.filter-chip {
+  font-size: 12.5px; font-weight: 500; padding: 6px 13px; border-radius: 999px;
+  border: 1px solid #2A3B34; color: #8FA69B; transition: all 0.15s ease; cursor: pointer;
+}
+.filter-chip:hover { color: #E8F0EC; border-color: #5C7A6E; }
+.filter-chip.active { background: #34D399; border-color: #34D399; color: #080D0B; }
+
+/* ---------- Cards ---------- */
+.bin-card {
+  border: 1px solid #1D2B26; background: #121C19; border-radius: 14px;
+  padding: 18px; transition: border-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+.bin-card:hover { border-color: #34D399; transform: translateY(-2px); }
+.bin-card:focus-visible { border-color: #34D399; }
+
+.kpi-card {
+  border: 1px solid #1D2B26; background: #121C19; border-radius: 14px;
+  padding: 18px; border-left: 3px solid var(--kpi-accent, #34D399);
+}
+
+/* ---------- Route card ---------- */
+.route-card { border: 1px solid #1D2B26; background: #121C19; border-radius: 14px; padding: 20px; }
+
+/* ---------- Toast ---------- */
+.toast {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: #16211D; border: 1px solid #2A3B34; border-left: 3px solid #34D399;
+  border-radius: 10px; padding: 12px 14px; box-shadow: 0 10px 30px -8px rgba(0,0,0,0.5);
+  animation: toast-in 0.25s cubic-bezier(0.16,1,0.3,1) both;
+  font-size: 13.5px; color: #E8F0EC;
+}
+.toast.removing { animation: toast-out 0.2s ease forwards; }
+.toast.success { border-left-color: #34D399; }
+.toast.warning { border-left-color: #FBBF24; }
+.toast.error   { border-left-color: #F87171; }
+.toast.info    { border-left-color: #22D3EE; }
+@keyframes toast-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toast-out { to { opacity: 0; transform: translateX(24px); } }
+
+/* ---------- Modal ---------- */
+#bin-modal-backdrop.open, #confirm-modal-backdrop.open { display: flex; }
+#bin-modal, #confirm-modal-backdrop > div {
+  animation: modal-in 0.22s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ---------- Counter number ---------- */
+.count-up { font-variant-numeric: tabular-nums; }
+
+/* ---------- Activity timeline ---------- */
+.timeline-item { position: relative; padding-left: 34px; padding-bottom: 22px; }
+.timeline-item::before {
+  content: ""; position: absolute; left: 10px; top: 26px; bottom: 0; width: 1.5px;
+  background: #1D2B26;
+}
+.timeline-item:last-child::before { display: none; }
+.timeline-dot {
+  position: absolute; left: 0; top: 2px; width: 22px; height: 22px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+  background: #16211D; border: 1px solid #2A3B34;
+}
+
+/* ---------- Bar chart bars ---------- */
+.bar-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; height: 100%; justify-content: flex-end; }
+.bar-rect { width: 60%; max-width: 34px; border-radius: 5px 5px 3px 3px; transition: height 0.7s cubic-bezier(0.16,1,0.3,1); }
+
+/* ---------- Empty state ---------- */
+.empty-state { text-align: center; padding: 56px 20px; }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* ==========================================================================
+   LIGHT MODE
+   ========================================================================== */
+html.light body { background: #F3F6F4; color: #16211D; }
+html.light aside#sidebar,
+html.light aside#mobile-drawer,
+html.light header,
+html.light #bottom-nav,
+html.light .rounded-xl.border,
+html.light .bin-card,
+html.light .kpi-card,
+html.light .route-card,
+html.light #bin-modal,
+html.light #confirm-modal-backdrop > div,
+html.light #notif-panel,
+html.light footer {
+  background: #FFFFFF;
+  border-color: #E1E9E4 !important;
+}
+html.light .bg-ink-900 { background: #F3F6F4; }
+html.light .bg-ink-850 { background: #FFFFFF; }
+html.light .bg-ink-800 { background: #FFFFFF; }
+html.light .bg-ink-700 { background: #F0F4F2; }
+html.light .bg-ink-700\/95,
+html.light .bg-ink-850\/95 { background: rgba(255,255,255,0.9); }
+html.light .text-mist-100 { color: #16211D; }
+html.light .text-mist-200 { color: #253B32; }
+html.light .text-mist-300 { color: #4B665A; }
+html.light .text-mist-400 { color: #6C8477; }
+html.light .border-ink-600\/60,
+html.light .border-ink-500\/50,
+html.light .border-ink-500\/60,
+html.light .divide-ink-600\/50 > * + * { border-color: #E1E9E4 !important; }
+html.light .nav-item { color: #4B665A; }
+html.light .nav-item:hover { background: #F0F4F2; color: #16211D; }
+html.light .filter-chip { color: #4B665A; border-color: #D7E2DC; }
+html.light .tank { background: #EEF3F0; border-color: #D7E2DC; }
+html.light .tank::before { background: #D7E2DC; }
+html.light .meter-track { background: #E7EFEA; }
+html.light .toast { background: #FFFFFF; border-color: #E1E9E4; color: #16211D; }
+html.light .timeline-item::before { background: #E1E9E4; }
+html.light .timeline-dot { background: #F0F4F2; border-color: #E1E9E4; }

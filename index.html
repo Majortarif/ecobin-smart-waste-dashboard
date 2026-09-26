@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoBin — Smart Waste Management Dashboard</title>
+<meta name="description" content="EcoBin 2.0 companion dashboard: monitor smart bins, waste analytics, collection routes and AI-assisted route recommendations.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind (play CDN, config below disables preflight-breaking resets we don't want) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+        },
+        colors: {
+          ink: {
+            950: '#080D0B', 900: '#0B1210', 850: '#0F1815', 800: '#121C19',
+            700: '#16211D', 600: '#1D2B26', 500: '#2A3B34',
+          },
+          mist: { 400: '#5C7A6E', 300: '#8FA69B', 200: '#B9CBC2', 100: '#E8F0EC' },
+          leaf:  { 400: '#2FBE85', 500: '#34D399', 600: '#1FA377' },
+          cyan:  { 400: '#22D3EE', 500: '#0EB8D6' },
+          amber: { 400: '#FBBF24', 500: '#E8A317' },
+          coral: { 400: '#F87171', 500: '#E5534B' },
+        },
+        boxShadow: {
+          glow: '0 0 0 1px rgba(52,211,153,0.15), 0 8px 30px -8px rgba(52,211,153,0.25)',
+        },
+      },
+    },
+  };
+</script>
+
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♻️</text></svg>">
+</head>
+
+<body class="font-body bg-ink-900 text-mist-100 antialiased">
+
+<!-- ============ TOASTS ============ -->
+<div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-sm" aria-live="polite"></div>
+
+<!-- ============ APP SHELL ============ -->
+<div class="flex min-h-screen">
+
+  <!-- ===== SIDEBAR (desktop) ===== -->
+  <aside id="sidebar" class="hidden lg:flex flex-col w-64 shrink-0 bg-ink-850 border-r border-ink-600/60 sticky top-0 h-screen">
+    <div class="flex items-center gap-3 px-6 h-20 border-b border-ink-600/60">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-leaf-500 to-cyan-500 grid place-items-center text-ink-950 font-display font-bold text-sm">EB</div>
+      <div class="leading-tight">
+        <p class="font-display font-semibold text-mist-100 text-[15px]">EcoBin</p>
+        <p class="text-[11px] text-mist-400">Operations Console</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 py-5 space-y-1 overflow-y-auto" id="sidebar-nav" aria-label="Primary navigation"></nav>
+
+    <div class="p-3 border-t border-ink-600/60">
+      <button id="theme-toggle-desktop" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-mist-300 hover:bg-ink-700 hover:text-mist-100 transition-colors" aria-label="Toggle light and dark mode">
+        <svg id="theme-icon-desktop" class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36-.7-.7M6.34 6.34l-.7-.7m12.02 0-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+        <span id="theme-label-desktop">Dark mode</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ===== MOBILE DRAWER ===== -->
+  <div id="mobile-drawer-backdrop" class="lg:hidden fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
+  <aside id="mobile-drawer" class="lg:hidden fixed top-0 left-0 h-full w-72 bg-ink-850 border-r border-ink-600/60 z-50 -translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="flex items-center justify-between gap-3 px-5 h-16 border-b border-ink-600/60">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-leaf-500 to-cyan-500 grid place-items-center text-ink-950 font-display font-bold text-xs">EB</div>
+        <p class="font-display font-semibold text-mist-100 text-sm">EcoBin</p>
+      </div>
+      <button id="close-drawer" class="p-1.5 text-mist-400 hover:text-mist-100" aria-label="Close menu">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto" id="mobile-nav" aria-label="Mobile navigation"></nav>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="flex-1 min-w-0 flex flex-col">
+
+    <!-- Topbar -->
+    <header class="sticky top-0 z-30 bg-ink-900/85 backdrop-blur border-b border-ink-600/60">
+      <div class="h-16 lg:h-20 px-4 lg:px-8 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button id="open-drawer" class="lg:hidden p-2 -ml-2 text-mist-300 hover:text-mist-100" aria-label="Open menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div class="min-w-0">
+            <p id="header-greeting" class="font-display font-semibold text-[17px] lg:text-lg text-mist-100 truncate">Good morning, Admin</p>
+            <p id="header-date" class="text-xs text-mist-400"></p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 lg:gap-3 shrink-0">
+          <button id="notif-btn" class="relative p-2 rounded-lg text-mist-300 hover:bg-ink-700 hover:text-mist-100 transition-colors" aria-label="Notifications">
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg>
+            <span id="notif-dot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-coral-400 ring-2 ring-ink-900"></span>
+          </button>
+          <button id="theme-toggle-mobile" class="lg:hidden p-2 rounded-lg text-mist-300 hover:bg-ink-700 hover:text-mist-100 transition-colors" aria-label="Toggle light and dark mode">
+            <svg id="theme-icon-mobile" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36-.7-.7M6.34 6.34l-.7-.7m12.02 0-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+          </button>
+          <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-ink-600/60">
+            <div class="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-gradient-to-br from-cyan-500 to-leaf-500 grid place-items-center text-ink-950 font-display font-semibold text-xs">A</div>
+            <div class="hidden lg:block leading-tight">
+              <p class="text-sm text-mist-100 font-medium">Admin User</p>
+              <p class="text-[11px] text-mist-400">Operations Lead</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications panel -->
+      <div id="notif-panel" class="hidden absolute right-4 lg:right-8 top-14 lg:top-[68px] w-[calc(100%-2rem)] max-w-sm bg-ink-800 border border-ink-600/60 rounded-xl shadow-2xl z-40 overflow-hidden">
+        <div class="px-4 py-3 border-b border-ink-600/60 flex items-center justify-between">
+          <p class="text-sm font-semibold text-mist-100">Notifications</p>
+          <button id="clear-notifs" class="text-xs text-mist-400 hover:text-leaf-400">Mark all read</button>
+        </div>
+        <div id="notif-list" class="max-h-80 overflow-y-auto divide-y divide-ink-600/50"></div>
+      </div>
+    </header>
+
+    <!-- Section container -->
+    <main id="main-content" class="flex-1 px-4 lg:px-8 py-6 lg:py-8 max-w-[1400px] w-full mx-auto pb-24 lg:pb-8">
+
+      <!-- ============ OVERVIEW ============ -->
+      <section id="section-overview" class="app-section space-y-8">
+
+        <div class="relative overflow-hidden rounded-2xl border border-ink-600/60 bg-gradient-to-br from-ink-800 via-ink-800 to-ink-700 px-6 py-10 lg:px-12 lg:py-14">
+          <div class="absolute inset-0 hero-grid opacity-40 pointer-events-none"></div>
+          <div class="absolute -right-24 -top-24 w-72 h-72 rounded-full bg-leaf-500/10 blur-3xl pointer-events-none"></div>
+          <div class="absolute -right-10 bottom-0 w-56 h-56 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
+          <div class="relative max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-leaf-400 bg-leaf-500/10 border border-leaf-500/20 rounded-full px-3 py-1 mb-5">
+              <span class="w-1.5 h-1.5 rounded-full bg-leaf-400 animate-pulse"></span> Live network · Dhaka Zone Cluster
+            </span>
+            <h1 class="font-display text-3xl lg:text-[2.6rem] leading-[1.1] font-semibold text-mist-100">Smart waste management, powered by data</h1>
+            <p class="mt-4 text-mist-300 text-[15px] lg:text-base leading-relaxed max-w-xl">Monitor collection activity, optimize routes, and build cleaner communities with intelligent waste management insights.</p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button data-nav="bins" class="nav-trigger inline-flex items-center gap-2 bg-leaf-500 hover:bg-leaf-400 text-ink-950 font-medium text-sm px-5 py-3 rounded-lg transition-colors shadow-glow">
+                View Smart Bins
+              </button>
+              <button data-nav="analytics" class="nav-trigger inline-flex items-center gap-2 bg-ink-700 hover:bg-ink-600 border border-ink-500/60 text-mist-100 font-medium text-sm px-5 py-3 rounded-lg transition-colors">
+                Analyze Waste
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display font-semibold text-mist-100 text-lg">Network at a glance</h2>
+            <span class="text-xs text-mist-400">Updated just now</span>
+          </div>
+          <div id="kpi-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+            <div class="flex items-center justify-between mb-5">
+              <h3 class="font-display font-semibold text-mist-100">Collection volume, last 7 days</h3>
+              <span class="text-xs text-mist-400" id="overview-week-total"></span>
+            </div>
+            <div id="overview-weekly-chart" class="flex items-end gap-2.5 lg:gap-4 h-44"></div>
+          </div>
+          <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+            <h3 class="font-display font-semibold text-mist-100 mb-5">Bin status mix</h3>
+            <div id="overview-status-donut" class="flex items-center justify-center mb-4"></div>
+            <div id="overview-status-legend" class="space-y-2 text-sm"></div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-4">
+          <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-semibold text-mist-100">Bins needing attention</h3>
+              <button data-nav="bins" class="nav-trigger text-xs text-leaf-400 hover:text-leaf-300">View all →</button>
+            </div>
+            <div id="overview-critical-list" class="space-y-3"></div>
+          </div>
+          <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-semibold text-mist-100">Recent activity</h3>
+              <button data-nav="activity" class="nav-trigger text-xs text-leaf-400 hover:text-leaf-300">View all →</button>
+            </div>
+            <div id="overview-activity-list" class="space-y-4"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SMART BINS ============ -->
+      <section id="section-bins" class="app-section hidden space-y-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 class="font-display text-2xl font-semibold text-mist-100">Smart Bins</h1>
+            <p class="text-sm text-mist-400 mt-1">Live status for every bin across the collection network.</p>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-4 lg:p-5 space-y-4">
+          <div class="flex flex-col lg:flex-row gap-3">
+            <div class="relative flex-1">
+              <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-mist-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+              <input id="bin-search" type="search" placeholder="Search by bin ID, location or waste type…" class="w-full bg-ink-700 border border-ink-500/50 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-mist-100 placeholder:text-mist-400 focus:outline-none focus:ring-2 focus:ring-leaf-500/50" aria-label="Search bins">
+            </div>
+            <select id="bin-sort" class="bg-ink-700 border border-ink-500/50 rounded-lg px-3.5 py-2.5 text-sm text-mist-100 focus:outline-none focus:ring-2 focus:ring-leaf-500/50" aria-label="Sort bins">
+              <option value="fill-desc">Sort: Fill level (high → low)</option>
+              <option value="fill-asc">Sort: Fill level (low → high)</option>
+              <option value="location">Sort: Location (A–Z)</option>
+              <option value="status">Sort: Status</option>
+              <option value="collection">Sort: Last collection</option>
+            </select>
+          </div>
+          <div id="bin-filters" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <p id="bin-results-count" class="text-xs text-mist-400"></p>
+        <div id="bin-grid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        <div id="bin-empty" class="hidden"></div>
+      </section>
+
+      <!-- ============ ANALYTICS ============ -->
+      <section id="section-analytics" class="app-section hidden space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 class="font-display text-2xl font-semibold text-mist-100">Waste Analytics</h1>
+            <p class="text-sm text-mist-400 mt-1">Composition, volume and recycling performance over time.</p>
+          </div>
+          <div id="analytics-range" class="flex bg-ink-800 border border-ink-600/60 rounded-lg p-1 gap-1"></div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-4">
+          <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+            <h3 class="font-display font-semibold text-mist-100 mb-1">Waste distribution</h3>
+            <p class="text-xs text-mist-400 mb-5">Share of total collected volume by category</p>
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+              <div id="analytics-donut" class="shrink-0"></div>
+              <div id="analytics-donut-legend" class="w-full space-y-2.5 text-sm"></div>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+            <h3 class="font-display font-semibold text-mist-100 mb-1">Recycling performance</h3>
+            <p class="text-xs text-mist-400 mb-5">Recovered material vs. landfill-bound waste</p>
+            <div id="analytics-recycling" class="space-y-5"></div>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="font-display font-semibold text-mist-100">Collection volume by day</h3>
+            <span id="analytics-week-total" class="text-xs text-mist-400"></span>
+          </div>
+          <div id="analytics-weekly-chart" class="flex items-end gap-3 lg:gap-5 h-52"></div>
+        </div>
+      </section>
+
+      <!-- ============ ROUTES ============ -->
+      <section id="section-routes" class="app-section hidden space-y-6">
+        <div>
+          <h1 class="font-display text-2xl font-semibold text-mist-100">Collection Routes</h1>
+          <p class="text-sm text-mist-400 mt-1">Active, scheduled and completed collection runs.</p>
+        </div>
+        <div id="routes-grid" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- ============ AI RECOMMENDATIONS ============ -->
+      <section id="section-ai" class="app-section hidden space-y-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 class="font-display text-2xl font-semibold text-mist-100">AI Route Optimization Simulator</h1>
+            <p class="text-sm text-mist-400 mt-1 max-w-2xl">This portfolio prototype uses rule-based logic and simulated operational data to demonstrate how AI-assisted waste collection optimization could work in a real smart-city system.</p>
+          </div>
+          <button id="generate-recs-btn" class="shrink-0 inline-flex items-center gap-2 bg-leaf-500 hover:bg-leaf-400 text-ink-950 font-medium text-sm px-4 py-2.5 rounded-lg transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.6M20 20v-5h-.6M4.6 9a8 8 0 0 1 14.9-2M19.4 15a8 8 0 0 1-14.9 2"/></svg>
+            Generate New Recommendations
+          </button>
+        </div>
+
+        <div id="ai-insight-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+        <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-display font-semibold text-mist-100">Recommended actions</h3>
+            <span class="text-[11px] text-mist-400 bg-ink-700 border border-ink-500/50 rounded-full px-2.5 py-1">Rule-based · Simulated data</span>
+          </div>
+          <div id="ai-recs-list" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- ============ ACTIVITY ============ -->
+      <section id="section-activity" class="app-section hidden space-y-6">
+        <div>
+          <h1 class="font-display text-2xl font-semibold text-mist-100">Activity</h1>
+          <p class="text-sm text-mist-400 mt-1">A timeline of operational events across the network.</p>
+        </div>
+        <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 lg:p-6">
+          <div id="activity-full-list" class="relative"></div>
+          <div id="activity-empty" class="hidden"></div>
+        </div>
+      </section>
+
+      <!-- ============ SETTINGS ============ -->
+      <section id="section-settings" class="app-section hidden space-y-6 max-w-2xl">
+        <div>
+          <h1 class="font-display text-2xl font-semibold text-mist-100">Settings</h1>
+          <p class="text-sm text-mist-400 mt-1">Preferences are saved to this browser.</p>
+        </div>
+
+        <div class="rounded-xl border border-ink-600/60 bg-ink-800 divide-y divide-ink-600/50">
+          <div class="p-5 flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-medium text-mist-100">Appearance</p>
+              <p class="text-xs text-mist-400 mt-0.5">Switch between dark and light interface</p>
+            </div>
+            <button id="settings-theme-toggle" class="toggle-switch" role="switch" aria-checked="true" aria-label="Toggle dark mode"><span class="toggle-knob"></span></button>
+          </div>
+          <div class="p-5 flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-medium text-mist-100">Notifications</p>
+              <p class="text-xs text-mist-400 mt-0.5">Receive alerts for critical bin levels</p>
+            </div>
+            <button id="settings-notif-toggle" class="toggle-switch" role="switch" aria-checked="true" aria-label="Toggle notifications"><span class="toggle-knob"></span></button>
+          </div>
+          <div class="p-5 flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p class="text-sm font-medium text-mist-100">Dashboard refresh</p>
+              <p class="text-xs text-mist-400 mt-0.5">How often simulated data refreshes</p>
+            </div>
+            <select id="settings-refresh" class="bg-ink-700 border border-ink-500/50 rounded-lg px-3 py-2 text-sm text-mist-100 focus:outline-none focus:ring-2 focus:ring-leaf-500/50">
+              <option value="30">Every 30 seconds</option>
+              <option value="60">Every minute</option>
+              <option value="300">Every 5 minutes</option>
+              <option value="0">Manual only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-ink-600/60 bg-ink-800 p-5 space-y-4">
+          <p class="text-sm font-medium text-mist-100">Data management</p>
+          <div class="flex flex-wrap gap-3">
+            <button id="export-data-btn" class="inline-flex items-center gap-2 bg-ink-700 hover:bg-ink-600 border border-ink-500/60 text-mist-100 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              Export Dashboard Data
+            </button>
+            <label class="inline-flex items-center gap-2 bg-ink-700 hover:bg-ink-600 border border-ink-500/60 text-mist-100 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21V9m0 0-4 4m4-4 4 4M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>
+              Import Dashboard Data
+              <input id="import-data-input" type="file" accept="application/json" class="hidden">
+            </label>
+            <button id="reset-data-btn" class="inline-flex items-center gap-2 bg-coral-500/10 hover:bg-coral-500/20 border border-coral-500/30 text-coral-400 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.6M4.6 9a8 8 0 1 1 1.5 8.5M4 9h5"/></svg>
+              Reset Simulated Data
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-ink-600/60 px-4 lg:px-8 py-8 mt-auto">
+      <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+        <div>
+          <p class="text-sm font-medium text-mist-100">EcoBin Smart Waste Management Dashboard</p>
+          <p class="text-xs text-mist-400 mt-1">Frontend Portfolio Prototype · Built with HTML, Tailwind CSS &amp; JavaScript</p>
+        </div>
+        <div class="flex items-center gap-5 text-xs text-mist-400">
+          <a href="#" class="hover:text-leaf-400 transition-colors">GitHub</a>
+          <a href="#" class="hover:text-leaf-400 transition-colors">LinkedIn</a>
+          <a href="#" class="hover:text-leaf-400 transition-colors">Portfolio</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ===== MOBILE BOTTOM NAV ===== -->
+<nav id="bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-ink-850/95 backdrop-blur border-t border-ink-600/60 flex" aria-label="Bottom navigation"></nav>
+
+<!-- ===== BIN DETAIL MODAL ===== -->
+<div id="bin-modal-backdrop" class="hidden fixed inset-0 bg-black/70 z-[60] items-center justify-center p-4">
+  <div id="bin-modal" role="dialog" aria-modal="true" aria-labelledby="bin-modal-title" class="w-full max-w-lg bg-ink-800 border border-ink-600/60 rounded-2xl max-h-[85vh] overflow-y-auto">
+    <div id="bin-modal-body"></div>
+  </div>
+</div>
+
+<!-- ===== RESET CONFIRM MODAL ===== -->
+<div id="confirm-modal-backdrop" class="hidden fixed inset-0 bg-black/70 z-[60] items-center justify-center p-4">
+  <div role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" class="w-full max-w-sm bg-ink-800 border border-ink-600/60 rounded-2xl p-6">
+    <h3 id="confirm-title" class="font-display font-semibold text-mist-100 text-lg mb-2">Reset simulated data?</h3>
+    <p class="text-sm text-mist-300 mb-6">This clears all bins, routes and activity back to the original demo dataset. This can't be undone.</p>
+    <div class="flex justify-end gap-3">
+      <button id="confirm-cancel" class="px-4 py-2 rounded-lg text-sm font-medium text-mist-300 hover:bg-ink-700">Cancel</button>
+      <button id="confirm-reset" class="px-4 py-2 rounded-lg text-sm font-medium bg-coral-500 hover:bg-coral-400 text-ink-950">Reset data</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

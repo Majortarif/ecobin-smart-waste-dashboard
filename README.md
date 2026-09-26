@@ -1,356 +1,91 @@
-# ♻️ EcoBin Smart Waste Management Dashboard
+# ♻️ EcoBin — Smart Waste Management Dashboard
 
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=24&duration=3000&pause=1000&color=00C2FF&center=true&vCenter=true&width=750&lines=Smart+Waste+Management;Monitor+%7C+Analyze+%7C+Optimize;AI-Assisted+Sustainability+Dashboard" alt="Typing Animation" />
-</p>
+**Companion operations interface for the EcoBin 2.0 concept — "The Next Generation AI Bin."**
 
-<p align="center">
-  <strong>A modern smart waste management dashboard for monitoring smart bins, analyzing waste data, managing collection routes, and generating AI-assisted operational recommendations.</strong>
-</p>
-
-<p align="center">
-  <a href="YOUR-CLOUDFLARE-PAGES-LINK">
-    <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Project-0F9D58?style=for-the-badge" alt="Live Demo"/>
-  </a>
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5"/>
-  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS"/>
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript"/>
-  <img src="https://img.shields.io/badge/Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare Pages"/>
-</p>
+A frontend-only, portfolio-grade dashboard for monitoring smart waste bins, understanding waste segregation statistics, reviewing collection routes, and exploring rule-based, AI-assisted route optimization recommendations.
 
 ---
 
-## 📌 Project Overview
+## 🖼️ Overview
 
-**EcoBin Smart Waste Management Dashboard** is a frontend-based management interface developed as a companion web platform for the broader **EcoBin 2.0 — The Next Generation AI Bin** concept.
+EcoBin Smart Waste Management Dashboard is a static, single-page web application that simulates the operations console a smart-city waste management team might use day to day: live bin fill levels, waste analytics, collection route status, and simulated AI recommendations — all running entirely in the browser.
 
-The dashboard demonstrates how information from smart waste bins could be presented through a centralized digital management system.
+This project was built as a **frontend engineering and product design portfolio piece**. It has no backend, no database, and no external services. All data is generated and persisted locally using JavaScript and `localStorage`.
 
-It allows users to:
+## 🎯 Problem Statement
 
-* Monitor simulated smart-bin conditions
-* Track fill levels and operational status
-* Analyze waste collection and segregation data
-* View simulated collection routes
-* Receive AI-assisted route optimization recommendations
-* Monitor operational activity
-* Manage dashboard preferences
-* Export and import simulated data
+Urban waste collection is often reactive: trucks run fixed routes regardless of how full bins actually are, leading to wasted trips, overflow, and inefficient fuel use. A smart, data-informed dashboard — even in prototype form — helps demonstrate how real-time bin telemetry and simple optimization logic can make collection more efficient.
 
-The current version is a **frontend portfolio prototype** using simulated data and a rule-based recommendation engine.
+## 🎯 Objectives
 
----
+- Visualize the live status of a network of smart bins (fill level, temperature, battery, waste type).
+- Surface actionable insights on waste composition and recycling performance.
+- Represent collection routes and simulate the effect of route optimization.
+- Demonstrate, transparently, how rule-based "AI" recommendations could work in a real system — without claiming to run an actual model.
+- Ship a fully static, dependency-light app that deploys in minutes on Cloudflare Pages.
 
-## 🎯 Project Goals
+## ✨ Key Features
 
-The project follows a simple concept:
+- **Overview dashboard** with animated KPI counters, a 7-day collection chart, a bin-status donut chart, top at-risk bins, and recent activity.
+- **Smart Bins** grid with live search, status/priority filters, multi-field sorting, and a detailed bin modal (fill history, battery, temperature, next suggested collection).
+- **Waste Analytics** with waste-distribution donut chart, recycling performance breakdown, and a weekly/30-day/3-month collection volume chart.
+- **Collection Routes** with functional **View Route** and **Optimize Route** actions that simulate distance and time reductions.
+- **AI Route Optimization Simulator** — clearly labeled rule-based recommendation engine driven by current bin fill, priority, zone and route data.
+- **AI insight cards** summarizing critical alerts, optimization potential, recycling trends, and zone-level hotspots.
+- **Activity timeline** of simulated operational events.
+- **Settings** for theme, notifications, refresh interval, and data export / import / reset.
+- Fully **responsive** (desktop sidebar, tablet, mobile drawer + bottom nav), **accessible** (semantic HTML, ARIA, keyboard-friendly modals, visible focus states), and animated with restrained, purposeful micro-interactions.
 
-> **Monitor → Analyze → Optimize → Act**
+## 🧩 Dashboard Modules
 
-The goal is to demonstrate how a smart waste management platform could transform operational data into useful visual insights and collection recommendations.
+| Module | Description |
+|---|---|
+| Overview | KPI summary, weekly volume chart, bin status mix, at-risk bins, recent activity |
+| Smart Bins | Searchable, filterable, sortable bin inventory with detail modal |
+| Waste Analytics | Waste distribution, recycling performance, collection volume trends |
+| Collection Routes | Route cards with view/optimize actions |
+| AI Recommendations | Rule-based optimization insights and recommendation feed |
+| Activity | Full operational activity timeline |
+| Settings | Theme, notifications, refresh interval, data export/import/reset |
 
----
+## 🤖 About the AI Recommendation Simulator
 
-## 🚨 Problem Statement
+> This portfolio prototype uses rule-based logic and simulated operational data to demonstrate how AI-assisted waste collection optimization could work in a real smart-city system.
 
-Traditional waste collection systems may depend heavily on fixed collection schedules rather than the real-time condition of individual waste bins.
+The simulator does **not** call any external AI/ML API. It evaluates simple, transparent rules against the current in-memory dataset — bin fill percentage, status, zone concentration, route load, and battery health — to produce contextual recommendation text. Recommendations regenerate on demand and change as the underlying simulated data changes.
 
-This can contribute to:
+## 🛠️ Technology Stack
 
-* Overflowing waste bins
-* Unnecessary collection trips
-* Inefficient route planning
-* Higher transportation costs
-* Poor visibility into waste generation
-* Delayed response to high-capacity bins
-* Limited monitoring of recycling performance
+- **HTML5** — semantic structure
+- **Tailwind CSS** (via CDN, no build step) — utility styling
+- **Vanilla JavaScript (ES6+)** — all app logic, state, and rendering
+- **Custom CSS** (`style.css`) — theming, animation, and bespoke components (bin "tank" gauge, timeline, toasts)
+- **Browser LocalStorage** — persistence for bins, routes, activity, and preferences
 
-A data-driven smart waste management platform could help collection teams make more informed operational decisions.
+No frameworks, no npm build pipeline, no bundler required.
 
----
+## 🏗️ System Architecture
 
-## 💡 Proposed Solution
-
-EcoBin provides a centralized dashboard where simulated smart-bin information can be monitored and analyzed.
-
-The system combines:
-
-**Smart Bin Monitoring + Waste Analytics + Route Management + AI-Assisted Recommendations**
-
-into a single responsive interface.
-
-In a future production system, the simulated data layer could be replaced with real IoT sensor data, cloud infrastructure, mapping services, and machine learning models.
-
----
-
-# 🚀 Key Features
-
-## 🗑️ Smart Bin Monitoring
-
-Monitor simulated smart bins through an interactive management interface.
-
-Each bin can display:
-
-* Bin ID
-* Location
-* Waste type
-* Fill percentage
-* Temperature
-* Battery level
-* Last collection time
-* Current operational status
-
-### Bin Status
-
-| Fill Level | Status      |
-| ---------- | ----------- |
-| 0–49%      | 🟢 Normal   |
-| 50–79%     | 🟡 Moderate |
-| 80–89%     | 🟠 Warning  |
-| 90–100%    | 🔴 Critical |
-
-Users can search, filter, and sort available bins.
-
----
-
-## 📊 Waste Analytics
-
-The analytics module provides visual insights into simulated waste collection data.
-
-It includes:
-
-* Waste category distribution
-* Weekly collection trends
-* Recycling performance
-* Recyclable waste statistics
-* Landfill waste statistics
-* Collection performance indicators
-
-Available time ranges include:
-
-* 7 Days
-* 30 Days
-* 3 Months
-
----
-
-## 🚛 Collection Route Management
-
-The dashboard provides a dedicated collection-route interface.
-
-Each simulated route can contain:
-
-* Route ID
-* Number of bins
-* Distance
-* Estimated collection time
-* Priority
-* Route status
-
-Users can interact with route cards and trigger simulated route optimization actions.
-
----
-
-## 🤖 AI Route Optimization Simulator
-
-The project includes an **AI Route Optimization Simulator**.
-
-### Important
-
-This prototype does **not** connect to an external AI model or API.
-
-Instead, it uses rule-based JavaScript logic with simulated operational data to demonstrate how an AI-assisted waste collection system could work.
-
-The recommendation logic considers factors such as:
-
-* Bin fill level
-* Collection urgency
-* Bin priority
-* Location
-* Number of bins
-* Route distance
-
-Example recommendations may include:
-
-> “Bin EB-014 has reached critical capacity. Consider prioritizing this location in the next collection cycle.”
-
-or:
-
-> “Multiple high-capacity bins are located within the same area. Consider grouping them into a single collection route.”
-
-This approach keeps the prototype transparent while demonstrating the concept of intelligent operational assistance.
-
----
-
-## 💡 AI Insight Cards
-
-The dashboard can generate contextual operational insights such as:
-
-* 🔥 Critical capacity alerts
-* 🚛 Route optimization suggestions
-* ♻️ Recycling insights
-* 📍 Location-based collection insights
-
-The recommendations are generated dynamically from the simulated dashboard data.
-
----
-
-## 🕒 Activity Timeline
-
-The Activity section provides an operational timeline containing simulated events such as:
-
-* Bin capacity alerts
-* Completed collection routes
-* Waste collection events
-* Low battery notifications
-* Generated route recommendations
-* Collection cycle updates
-
----
-
-## 🌙 Dark & Light Mode
-
-The dashboard supports:
-
-* 🌙 Dark Mode
-* ☀️ Light Mode
-
-The user's theme preference is stored using browser LocalStorage.
-
----
-
-## 💾 Local Data Persistence
-
-The application uses the browser's **LocalStorage API** to preserve:
-
-* Dashboard preferences
-* Theme selection
-* Simulated bin data
-* User settings
-* Modified application state
-
-No backend database is required.
-
----
-
-## 📤 Data Export & Import
-
-Users can export simulated dashboard data as a JSON file.
-
-The application also supports importing previously exported data.
-
-This demonstrates basic data portability without requiring a cloud backend.
-
----
-
-## 🔎 Search, Filtering & Sorting
-
-The Smart Bin management interface supports:
-
-### Search
-
-Search by:
-
-* Bin ID
-* Location
-* Waste type
-
-### Filtering
-
-Filter by:
-
-* Status
-* Waste type
-* Priority
-
-### Sorting
-
-Sort by:
-
-* Fill level
-* Location
-* Status
-* Collection time
-
----
-
-# 🎨 UI / UX
-
-The interface follows a modern smart-city and sustainability technology aesthetic.
-
-### Design characteristics
-
-* Modern dark-first design
-* Green and cyan environmental technology theme
-* Responsive dashboard layout
-* Glass-style UI elements
-* Soft gradients
-* Rounded cards
-* Professional typography
-* Interactive data cards
-* Smooth transitions
-* Micro-interactions
-* Responsive navigation
-* Mobile-friendly layouts
-* Toast notifications
-* Accessible interaction states
-
-The goal is to make the application feel like a real **Smart Waste Management Operations Platform** rather than a basic academic dashboard.
-
----
-
-# 🧠 System Architecture
-
-```text
-                    ┌─────────────────────────┐
-                    │          User           │
-                    └────────────┬────────────┘
-                                 │
-                                 ▼
-                  ┌──────────────────────────┐
-                  │     Web Dashboard UI     │
-                  └────────────┬─────────────┘
-                               │
-        ┌──────────────────────┼──────────────────────┐
-        │                      │                      │
-        ▼                      ▼                      ▼
-   Smart Bins             Analytics              Routes
-        │                      │                      │
-        └──────────────────────┼──────────────────────┘
-                               ▼
-                  ┌──────────────────────────┐
-                  │    JavaScript Logic      │
-                  ├──────────────────────────┤
-                  │ Data Processing          │
-                  │ Search & Filtering       │
-                  │ Analytics                │
-                  │ AI Recommendations       │
-                  │ UI Management            │
-                  └────────────┬─────────────┘
-                               │
-                               ▼
-                    ┌──────────────────────┐
-                    │     LocalStorage     │
-                    └──────────────────────┘
+```
+Browser
+ ├── index.html      → structure & Tailwind config
+ ├── style.css        → theme tokens, animation, bespoke components
+ ├── script.js         → state, simulated data generators, rendering, events
+ └── localStorage      → ecobin_state_v1 { data: {...}, prefs: {...} }
 ```
 
----
+There is no server tier. On first load, `script.js` seeds a deterministic demo dataset (48 bins, 5 routes, activity feed) and writes it to `localStorage`. On every subsequent load, the saved state is read back and rendered. All interactions (filtering, sorting, optimizing a route, generating recommendations, editing settings) mutate the in-memory state and persist it back to `localStorage`.
 
-# 🛠️ Technology Stack
+## 🧪 Methodology
 
-| Technology             | Purpose                            |
-| ---------------------- | ---------------------------------- |
-| **HTML5**              | Application structure              |
-| **Tailwind CSS**       | Responsive UI and styling          |
-| **Vanilla JavaScript** | Application logic and interactions |
-| **LocalStorage API**   | Client-side data persistence       |
-| **Cloudflare Pages**   | Static deployment                  |
+- **Bin status** is derived from fill percentage: 0–49% Normal, 50–79% Moderate, 80–89% Warning, 90–100% Critical (or Offline if the bin isn't reporting).
+- **Route optimization** applies a randomized-but-bounded distance/time reduction (6–16%) to simulate the effect of resequencing stops, and logs the change to the activity feed.
+- **AI recommendations** are generated by inspecting the current bin and route arrays for critical bins, zone hotspots, mergeable routes, offline bins, and low-battery bins, then formatting plain-language suggestions.
+- **Analytics ranges** (7 / 30 / 90 days) use a seeded pseudo-random generator so values are stable within a session but vary sensibly by range.
 
----
+## 📁 Project Structure
 
-# 📁 Project Structure
-
-```text
+```
 ecobin-smart-waste-dashboard/
 │
 ├── index.html
@@ -359,403 +94,75 @@ ecobin-smart-waste-dashboard/
 └── README.md
 ```
 
-### File Responsibilities
+## 💻 Local Setup
 
-**`index.html`**
-Defines the main dashboard structure and application interface.
+No build tools or installation required.
 
-**`style.css`**
-Contains custom styling, animations, responsive adjustments, and visual enhancements.
+1. Download or clone this project folder.
+2. Open `index.html` directly in any modern browser (Chrome, Firefox, Edge, Safari).
 
-**`script.js`**
-Handles application logic, simulated data, dashboard interactions, analytics, filtering, AI recommendations, LocalStorage, and data import/export.
-
-**`README.md`**
-Contains project documentation, methodology, setup, deployment, limitations, and future development information.
-
----
-
-# ⚙️ Methodology
-
-The project follows a structured frontend development process:
-
-```text
-Problem Identification
-        ↓
-Requirement Analysis
-        ↓
-UI/UX Planning
-        ↓
-Frontend Development
-        ↓
-Simulated Data Layer
-        ↓
-Dashboard Logic
-        ↓
-AI Recommendation Logic
-        ↓
-Testing & Refinement
-        ↓
-Cloudflare Pages Deployment
-```
-
-### 1. Problem Identification
-
-Identified common operational challenges associated with traditional waste collection systems.
-
-### 2. Requirement Analysis
-
-Defined the required modules:
-
-* Smart Bin Monitoring
-* Waste Analytics
-* Route Management
-* AI Recommendations
-* Activity Tracking
-* Settings
-* Data Management
-
-### 3. UI/UX Design
-
-Designed a responsive smart-city dashboard focused on clear information hierarchy and easy navigation.
-
-### 4. Frontend Development
-
-Implemented the interface using HTML5, Tailwind CSS, and Vanilla JavaScript.
-
-### 5. Simulated Data
-
-Created realistic simulated bin, route, waste, and activity data to demonstrate the proposed system.
-
-### 6. Functional Logic
-
-Implemented:
-
-* Search
-* Filtering
-* Sorting
-* Modal interactions
-* Analytics calculations
-* Theme management
-* LocalStorage
-* Import/export
-
-### 7. AI Recommendation Logic
-
-Developed a rule-based recommendation engine that analyzes simulated operational conditions and generates contextual recommendations.
-
-### 8. Testing
-
-Tested the interface, interactions, responsiveness, persistence, and major user flows.
-
-### 9. Deployment
-
-Prepared the project as a static website and deployed it using **Cloudflare Pages**.
-
----
-
-# 🤖 AI Recommendation Methodology
-
-The AI simulation follows a simplified decision pipeline:
-
-```text
-Smart Bin Data
-      ↓
-Check Fill Level
-      ↓
-Check Priority
-      ↓
-Check Location
-      ↓
-Check Collection Urgency
-      ↓
-Analyze Route Conditions
-      ↓
-Generate Recommendation
-```
-
-For example:
-
-```text
-IF fill level >= 90%
-        ↓
-Critical Capacity Alert
-```
-
-or:
-
-```text
-IF multiple high-fill bins
-   are located in the same area
-        ↓
-Suggest Grouped Collection Route
-```
-
-The current system is intentionally rule-based.
-
-A future implementation could replace this logic with machine learning models or optimization algorithms.
-
----
-
-# 🔐 Privacy & Data
-
-This prototype does not require:
-
-* User accounts
-* Backend services
-* Cloud databases
-* External AI APIs
-* API keys
-
-Application data is stored locally in the user's browser.
-
----
-
-# 🌐 Live Demo
-
-🚀 **[View Live Project →](YOUR-CLOUDFLARE-PAGES-LINK)**
-
-The project is deployed as a static web application using **Cloudflare Pages**.
-
----
-
-# 💻 Run Locally
-
-Clone the repository:
+Optional (recommended for consistent relative-path behavior): serve it with any static file server, e.g.:
 
 ```bash
-git clone https://github.com/Majortarif/ecobin-smart-waste-dashboard.git
+# Python
+python3 -m http.server 8080
+
+# Node (if installed)
+npx serve .
 ```
 
-Move into the project directory:
+Then visit `http://localhost:8080`.
 
-```bash
-cd ecobin-smart-waste-dashboard
-```
+## ☁️ Deploying to Cloudflare Pages
 
-Then open:
+This project is a plain static site and deploys to **Cloudflare Pages** with no build command and no environment variables.
 
-```text
-index.html
-```
+### Option 1 — Direct Upload
 
-in any modern web browser.
+1. Create or open a Cloudflare account.
+2. Go to **Workers & Pages → Pages**.
+3. Click **Create a project → Upload assets** (direct upload / static deployment option).
+4. Upload the project folder containing `index.html`, `style.css`, and `script.js`.
+5. Click **Deploy site**.
+6. Cloudflare will provide a public `*.pages.dev` URL.
 
-No installation or package manager is required.
+### Option 2 — GitHub Integration
 
----
+1. Push this project to a GitHub repository.
+2. In Cloudflare Pages, choose **Connect to Git** and select the repository.
+3. Leave the build command empty and set the output directory to the project root (`/`).
+4. Deploy — Cloudflare will automatically redeploy on every push to the connected branch.
 
-# ☁️ Cloudflare Pages Deployment
+No Cloudflare Workers, Functions, KV, or database bindings are required.
 
-This project is designed for static deployment through **Cloudflare Pages**.
+## 📸 Screenshots
 
-## Option 1 — Direct Upload
+_Add screenshots of the Overview, Smart Bins, Analytics, Routes, and AI Recommendations sections here once deployed._
 
-1. Open Cloudflare.
-2. Go to **Workers & Pages / Pages**.
-3. Create a new Pages project.
-4. Select the static/direct upload option.
-5. Upload the project files.
-6. Make sure `index.html` is in the root directory.
-7. Deploy the project.
-8. Cloudflare will provide a public `*.pages.dev` URL.
+## ⚠️ Limitations
 
-## Option 2 — GitHub Integration
+- This is a **frontend prototype**. All bin, route, and activity data is **simulated**, not sourced from real hardware.
+- There is **no real IoT connectivity** — no MQTT, LoRaWAN, or sensor integration.
+- AI recommendations are **rule-based**, not generated by a machine learning model or external AI API.
+- Data is stored per-browser in `localStorage`; it is not synced across devices or users.
+- Simulated "live" updates (auto-refresh) apply small randomized drift to fill levels for demonstration purposes only.
 
-The GitHub repository can also be connected to Cloudflare Pages.
+## 🚀 Future Improvements
 
-After connecting the repository, Cloudflare Pages can automatically deploy updated versions when changes are pushed to GitHub.
+- Connect to real IoT sensor telemetry (e.g., ultrasonic fill sensors) via a backend ingestion service.
+- Replace the rule-based simulator with a real optimization model (e.g., vehicle routing problem solver) or ML-based fill-level forecasting.
+- Add multi-user roles, authentication, and audit logging for a production deployment.
+- Persist data in a real database and expose a proper API instead of LocalStorage.
+- Add map-based route visualization and geofencing.
 
-Because this is a static HTML/CSS/JavaScript application:
+## 👤 Author
 
-* No build command is required.
-* No environment variables are required.
-* No backend configuration is required.
+Built as a frontend engineering & product design portfolio project.
 
----
-
-# 📸 Screenshots
-
-> Screenshots can be added here after deployment.
-
-Recommended screenshots:
-
-* Dashboard Overview
-* Smart Bin Monitoring
-* Waste Analytics
-* Collection Routes
-* AI Recommendations
-* Mobile Responsive View
-
-Example:
-
-```text
-screenshots/
-├── dashboard.png
-├── smart-bins.png
-├── analytics.png
-├── routes.png
-└── ai-recommendations.png
-```
+- GitHub — _add your link_
+- LinkedIn — _add your link_
+- Portfolio — _add your link_
 
 ---
 
-# ⚠️ Current Limitations
-
-The current version is a frontend prototype.
-
-### Simulated Data
-
-The dashboard uses simulated operational data instead of live sensor information.
-
-### No Real IoT Connection
-
-The system is not connected to physical smart-bin sensors.
-
-### Rule-Based AI
-
-The AI recommendation feature is a rule-based simulator rather than a trained machine learning model.
-
-### No Real-Time GPS
-
-Routes are simulated and do not currently use live GPS or mapping data.
-
-### Local Storage
-
-Data is stored locally in the browser rather than a centralized cloud database.
-
----
-
-# 🔮 Future Improvements
-
-The project could be expanded into a complete smart waste management ecosystem.
-
-### IoT Integration
-
-Connect real smart bins with sensors for:
-
-* Fill-level monitoring
-* Weight measurement
-* Temperature monitoring
-* Battery monitoring
-* Environmental sensing
-
-### Machine Learning
-
-Future models could predict:
-
-* Bin overflow
-* Waste generation
-* Collection demand
-* Optimal collection times
-
-### Route Optimization
-
-Integrate real optimization algorithms for:
-
-* Vehicle routing
-* Distance minimization
-* Time optimization
-* Dynamic collection scheduling
-
-### Mapping
-
-Integrate mapping services for:
-
-* Live bin locations
-* Collection vehicle tracking
-* Route visualization
-* Geographic analysis
-
-### Cloud Backend
-
-Future versions could include:
-
-* User authentication
-* Cloud database
-* Real-time synchronization
-* Admin management
-* Multi-user access
-
----
-
-# 🌱 EcoBin 2.0 Ecosystem
-
-This dashboard is designed as a software interface companion to the broader:
-
-## **EcoBin 2.0 — The Next Generation AI Bin**
-
-The broader concept envisions a smart waste management ecosystem combining:
-
-```text
-Smart Bins
-    ↓
-IoT Sensors
-    ↓
-Data Collection
-    ↓
-Cloud Infrastructure
-    ↓
-Analytics & Prediction
-    ↓
-AI / Optimization
-    ↓
-Management Dashboard
-    ↓
-Efficient Waste Collection
-```
-
-The current dashboard represents the **software management and visualization layer** of that ecosystem.
-
----
-
-# 📚 Learning & Development Focus
-
-This project demonstrates practical experience in:
-
-* Frontend development
-* Responsive UI/UX
-* JavaScript application logic
-* Dashboard design
-* Data visualization concepts
-* Local data persistence
-* Rule-based recommendation systems
-* Search and filtering
-* Data management
-* Product-oriented interface design
-* Static web deployment
-
----
-
-# 👨‍💻 Author
-
-## Tariful Hoque
-
-**CSE Graduate | Machine Learning & AI | Data Science | UI/UX**
-
-📧 Email: `tarifulhoque347@gmail.com`
-
-💼 LinkedIn:
-`https://www.linkedin.com/in/tariful-hoque-582321259`
-
-🌐 Portfolio:
-`https://tarifulhoqueportfoloi.netlify.app/`
-
-🐙 GitHub:
-`https://github.com/Majortarif`
-
----
-
-# ⭐ Support
-
-If you find this project useful or interesting, consider giving the repository a ⭐.
-
----
-
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=120&section=footer&text=EcoBin%20Smart%20Waste%20Management&fontSize=20&fontColor=ffffff" alt="EcoBin Footer"/>
-</p>
-
-<p align="center">
-  <strong>♻️ Monitor. Analyze. Optimize. Build Cleaner Communities.</strong>
-</p>
+**EcoBin Smart Waste Management Dashboard** · Frontend Portfolio Prototype · Built with HTML, Tailwind CSS & JavaScript.
